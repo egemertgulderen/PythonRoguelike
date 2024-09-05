@@ -3,8 +3,7 @@ import random
 
 # Tile size
 from settings import *
-screen_width = 1024
-screen_height = 768
+
 
 min_room_size = 8
 
@@ -34,7 +33,16 @@ class Map:
             return True
         return self.map[y][x].blocked  # type: ignore
     
-    
+    def set_block(self, x, y):
+        if 0 <= x < self.width and 0 <= y < self.height:
+            self.map[y][x].blocked = True # type: ignore
+
+    def set_unblock(self, x, y):
+        if 0 <= x < self.width and 0 <= y < self.height:
+            self.map[y][x].blocked = False # type: ignore
+
+
+
     # def create_room(self, room):
     #     for y in range(room.top, room.bottom):
     #         for x in range(room.left, room.right):

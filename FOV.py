@@ -48,7 +48,7 @@ class FOV:
                 distance_squared = dx * dx + dy * dy
                 if distance_squared < radius_squared:
                     self.set_visible(map, X, Y)
-                    self.set_explored(map,X,Y)
+                    self.set_explored(map, X, Y)
 
                 if blocked:
                     if map.is_blocked(X, Y):
@@ -99,4 +99,3 @@ class FOV:
     
 
    
-''' can add shadow for entities(monster)'''

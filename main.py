@@ -1,14 +1,12 @@
 import pygame,sys
 
-COLOR_BLACK = (0, 0, 0)
-COLOR_WHITE = (255, 255, 255)
-COLOR_GREY = (100, 100, 100)
-COLOR_RED = (255, 0, 0)
 from map import * 
 from entity import *
 from settings import *
 
+from inventory import *
 from FOV import FOV
+from GUI import GUI
 
 class Game:
     def __init__(self, width=screen_width, height=screen_height, title="Roguelike"):
@@ -22,9 +20,7 @@ class Game:
         pygame.display.set_caption(self.title)
         self.clock = pygame.time.Clock()
 
-        self.running = True
-
-
+        self.game_state = "playing"
 
         # Initialize map
         self.map = Map(self.width // tile_size, self.height // tile_size)
@@ -35,25 +31,47 @@ class Game:
         root_node.create_dungeon(self.map)
 
         # Create player character
-        self.player = Player(160, 160, (255, 255, 0),True,"Player",100)
-
+        self.player = Player(160, 160, (255, 255, 0),self.map,"Player",100,20)
+        self.monster = BasicMonster(128,160,COLOR_RED,self.map,"Evil",100)
         self.Fov = FOV()
-        # List to hold all entities
-        self.entities = [self.player]
+        self.GUI = GUI()
 
-        self.game_state = 'playing'
+        # List to hold all entities
+
+        self.entities = [self.player,self.monster]
+
         
         
     def handle_events(self):
-            for event in pygame.event.get():
+        # Check if entity is dead
+        for entity in self.entities:
+            if entity.status == "Dead":
+                self.clear(entity)
+        for event in pygame.event.get():
+            if self.player.status == "Dead":
+                self.game_state = "quit"
+            else:
                 if event.type == pygame.QUIT:
-                    self.running = False
-                if self.player.handle_events(event, self.map,self.entities):
-                    self.Fov.compute_fov(self.map,self.player.x//tile_size,self.player.y//tile_size,8,self.screen)
-            
+                    self.game_state = "quit"
+
+                if self.game_state == "playing":
+                    if self.player.handle_events(event, self.map,self.entities):
+                        if self.player.player_action == "took-turn":
+                            for entity in self.entities:
+                                if entity != self.player:
+                                    entity.take_turn(self.player,self.map)
+                                    self.player.player_action = None
+
+                        # değişebilir
+                        self.Fov.compute_fov(self.map,self.player.x//tile_size,self.player.y//tile_size,8,self.screen)
+
+                            
+                   
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.draw_map()
+        self.GUI.draw_health_bar(self.screen,self.player)
+
         for entity in self.entities:
             entity.draw(self.screen)
 
@@ -91,7 +109,7 @@ class Game:
             self.entities.remove(entity)
 
     def run(self):
-        while self.running:
+        while self.game_state == "playing":
             self.handle_events()
             self.draw()
             self.clock.tick(60)
