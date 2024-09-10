@@ -12,6 +12,7 @@ class Item:
                 print(f"{self.name} has no effect.")
 
 
+
 class Inventory:
     def __init__(self, capacity = 10) -> None:
         self.capacity = capacity

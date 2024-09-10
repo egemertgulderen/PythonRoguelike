@@ -80,7 +80,7 @@ class Entity:
         return moved
     
 
-    def move_or_attack(self,dx,dy,game_map,entities):
+    def move_or_attack(self,dx,dy,game_map,entities, gui):
         moved = False
         attacked = False
         new_x = self.x + dx
@@ -97,7 +97,7 @@ class Entity:
             for entity in entities:
                 if entity.x == new_x and entity.y == new_y:
 
-                    self.attack(entity,game_map)
+                    self.attack(entity,game_map, gui)
                     attacked = True
     
         if attacked or moved:
@@ -114,9 +114,10 @@ class Entity:
             self.status = "Dead"
             self.unblock_current_tile(game_map)
             
-    def attack(self,entity,game_map):
+    def attack(self,entity,game_map, gui):
         entity.take_damage(self.damage,game_map)
-        print(f"{self.name} attackted " + str(entity.name))
+        message = f"{self.name} attacked {entity.name}!"
+        gui.add_message(message)  # Send message to GUI log
 
 
 class Player(Entity):
@@ -132,22 +133,22 @@ class Player(Entity):
         self.inventory = Inventory(10) # type: ignore
 
 
-    def handle_events(self, event, game_map,entitites):
+    def handle_events(self, event, game_map,entitites, gui):
         moved = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                if self.move_or_attack(-self.size, 0, game_map,entitites):
+                if self.move_or_attack(-self.size, 0, game_map,entitites, gui):
                     moved = True
             elif event.key == pygame.K_RIGHT:
-                if self.move_or_attack(self.size, 0, game_map,entitites):
+                if self.move_or_attack(self.size, 0, game_map,entitites, gui):
                     moved = True
 
             elif event.key == pygame.K_UP:
-                if self.move_or_attack(0, -self.size, game_map,entitites):
+                if self.move_or_attack(0, -self.size, game_map,entitites, gui):
                     moved = True
 
             elif event.key == pygame.K_DOWN:
-                if self.move_or_attack(0, self.size, game_map,entitites):
+                if self.move_or_attack(0, self.size, game_map,entitites, gui):
                     moved = True
 
         if moved:
@@ -162,12 +163,12 @@ class BasicMonster(Entity):
     def __init__(self, x, y, color, game_map, name=None, health=100, damage=10):
         super().__init__(x, y, color, game_map, name, health, damage)
 
-    def take_turn(self,player,game_map):
+    def take_turn(self,player,game_map, gui):
         # if can see player
 
         if self.distance_to(player) >= 2*tile_size:
             self.move_toward(player.x,player.y,game_map)
 
         else:
-            self.attack(player,game_map)
+            self.attack(player,game_map, gui)
 

@@ -23,7 +23,7 @@ class Game:
         self.game_state = "playing"
 
         # Initialize map
-        self.map = Map(self.width // tile_size, self.height // tile_size)
+        self.map = Map(main_game_width// tile_size, main_game_height // tile_size)
 
         root_room = Room(0, 0, self.width // tile_size, self.height // tile_size)
         root_node = BSPNode(root_room)
@@ -40,8 +40,8 @@ class Game:
 
         self.entities = [self.player,self.monster]
 
-        
-        
+
+
     def handle_events(self):
         # Check if entity is dead
         for entity in self.entities:
@@ -55,11 +55,16 @@ class Game:
                     self.game_state = "quit"
 
                 if self.game_state == "playing":
-                    if self.player.handle_events(event, self.map,self.entities):
+                    if self.player.handle_events(event, self.map,self.entities,self.GUI):
+                        # check for if player played its action or not
                         if self.player.player_action == "took-turn":
                             for entity in self.entities:
                                 if entity != self.player:
-                                    entity.take_turn(self.player,self.map)
+                                    # check if entities died in the last 'player turn'
+                                    if entity.status == "Dead":
+                                        continue
+                                    else:
+                                        entity.take_turn(self.player,self.map,self.GUI)
                                     self.player.player_action = None
 
                         # değişebilir
@@ -70,12 +75,15 @@ class Game:
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.draw_map()
-        self.GUI.draw_health_bar(self.screen,self.player)
-
+        self.draw_GUI()
         for entity in self.entities:
             entity.draw(self.screen)
 
         pygame.display.flip()
+
+    def draw_GUI(self):
+        self.GUI.draw_health_bar(self.screen,self.player)
+        self.GUI.draw_message_block(self.screen)
 
     def draw_map(self):
         for y in range(self.map.height):

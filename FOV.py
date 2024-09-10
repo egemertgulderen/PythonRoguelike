@@ -68,9 +68,10 @@ class FOV:
 
     def compute_fov(self,map, player_x, player_y, radius,screen):
         # Önce tüm haritayı görünmez yap
+        ## Bunu değiştirdim
         for y in range(map.height):
             for x in range(map.width):
-                self.set_not_visible(map, x, y)
+                self.set_visible(map, x, y)
 
         # Ardından FOV'u hesapla ve görünür alanları belirle
         for octant in range(8):
