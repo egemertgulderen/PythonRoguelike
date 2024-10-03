@@ -1,6 +1,12 @@
 tile_size = 16
 
-# Temp screen res
+WALL_TILE_INDEX_1 = 17  # First wall tile
+WALL_TILE_INDEX_2 = 18  # Second wall tile
+WALL_TILE_INDEX_3 = 19  # Third wall tile
+GROUND_TILE_INDEX = 20  # Ground tile index (you can change this based on your tile selection)
+
+
+
 screen_width = 1280
 screen_height = 800
 right_panel_width = 320

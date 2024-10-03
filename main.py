@@ -3,6 +3,7 @@ import pygame,sys
 from map import * 
 from entity import *
 from settings import *
+from parser import *
 
 from inventory import *
 from FOV import FOV
@@ -21,6 +22,8 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.game_state = "playing"
+
+        self.tiles = load_tiles('tile_atlas.png', 16, 16)
 
         # Initialize map
         self.map = Map(main_game_width// tile_size, main_game_height // tile_size)
@@ -77,7 +80,7 @@ class Game:
         self.draw_map()
         self.draw_GUI()
         for entity in self.entities:
-            entity.draw(self.screen)
+            entity.draw(self.screen, self.tiles, 125)
 
         pygame.display.flip()
 
@@ -110,7 +113,7 @@ class Game:
                     pygame.draw.rect(self.screen, COLOR_BLACK, rect)
 
 
-                
+
 
     def clear(self, entity):
         if entity in self.entities:

@@ -37,8 +37,13 @@ class Entity:
     def handle_events(self, event, game_map):
         pass
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.size, self.size))
+    def draw(self, screen, tiles, tile_index):
+        if self.name == "Player":
+            tile = tiles[25]
+            screen.blit(tile, (self.x, self.y))
+        else:
+            tile = tiles[tile_index]
+            screen.blit(tile, (self.x, self.y))
 
     def get_coordinates(self):
         return self.x, self.y
