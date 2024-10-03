@@ -2,7 +2,7 @@
 
 Python Roguelike is a turn-based roguelike game developed using the Pygame library. It features procedurally generated dungeons, a field of view system using shadow casting, and a simple combat and inventory system.
 
-![Roguelike Demo](roguelike_gif.gif)
+![Roguelike Demo](Roguelike_gif.gif)
 
 ## Installation
 
